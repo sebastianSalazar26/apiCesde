@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <form action="http://localhost:8000/cesde/cargar_csv/" method="post" id="uploadForm" enctype="multipart/form-data" >
+        <label> BD predictivo</label><br>
+        <input type="file" name="predictivo" id="predictivo" ><br>
+        <label>BD matricula</label><br>
+        <input type="file" name="matricula" id="matricula"><br>
+        <label>BD whatsapp</label><br>
+        <input type="file" name="whatsapp" id="whatsapp"><br>
+        <label>BD Llamadas</label><br>
+        <input type="file" name="SMS" id="SMS"><br><br>
+        <button type="submit" id="enviar">Cargar CSV</button>
+    </form>
+    
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var formData = new FormData();
+            formData.append('predictivo', document.getElementById('predictivo').files[0]);
+            formData.append('matricula', document.getElementById('matricula').files[0]);
+            formData.append('whatsapp', document.getElementById('whatsapp').files[0]);
+            formData.append('SMS', document.getElementById('SMS').files[0]);
+
+            fetch('http://localhost:8000/cesde/cargar_csv/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Incluye esto si estás usando Django templates
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Error en la solicitud');
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    
+</body>
+</html>
